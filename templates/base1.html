@@ -13,12 +13,18 @@
     <header>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
           <div class="container">
-              <a href="/register">
-                  <button type="button" class="btn btn-primary btn-lg">Зарегестрироваться</button>
-              </a>
-              <a href="/login">
-                  <button type="button" class="btn btn-secondary btn-lg">Войти</button>
-              </a>
+              {% if current_user.is_authenticated %}
+                <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+              {% else %}
+                  <p>
+                      <a href="/register">
+                          <button type="button" class="btn btn-primary btn-lg">Зарегистрироваться</button>
+                      </a>
+                      <a href="/login">
+                          <button type="button" class="btn btn-secondary btn-lg">Войти</button>
+                      </a>
+                  </p>
+              {% endif %}
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               </ul>
                 <form action="/submit" method="post">
