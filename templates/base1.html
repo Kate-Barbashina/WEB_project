@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+          crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+          <div class="container">
+              <a href="/register">
+                  <button type="button" class="btn btn-primary btn-lg">Зарегестрироваться</button>
+              </a>
+              <a href="/login">
+                  <button type="button" class="btn btn-secondary btn-lg">Войти</button>
+              </a>
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              </ul>
+                <form action="/submit" method="post">
+                    <button type="button" class="btn btn-success">Создать свою викторину</button>
+                </form>
+          </div>
+        </nav>
+    </header>
+
+    <h1> Добро пожаловать в нашу викторину</h1>
+    <h2> Вы можете найти викторину для себя или создать свою</h2>
+
+    <div class="row">
+      <div class="col-sm-6 mb-3 mb-sm-0">
+        <div class="card" style="width: 18rem;">
+            <img src="/static/img/geo.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Викторина по географии</h5>
+                <p class="card-text">Вы сможете проверить свои знания в географии или узнать интересные факты</p>
+                <a href="/geography">
+                    <button type="button" class="btn btn-primary">Начать</button>
+                </a>
+              </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="card" style="width: 18rem;">
+          <img src="/static/img/chemistry.jpg" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Викторина по химии</h5>
+            <p class="card-text">Вы сможете проверить свои знания в химии или узнать интересные факты</p>
+            <a href="/chemistry">
+                <button type="button" class="btn btn-primary">Начать</button>
+            </a>
+        </div>
+      </div>
+
+    </div>
+</body>
+</html>
