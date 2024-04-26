@@ -1,8 +1,10 @@
 from flask import Flask, render_template, redirect, make_response, jsonify
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User, LoginForm
 from forms.user import RegisterForm
+from data.quiz import Quiz
+from forms.quizz import QuizForm
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -28,11 +30,23 @@ def index():
     return render_template("base1.html")
 
 
-@app.route('/submit', methods=['POST'])
-def submit_form():
-    # Handle form submission logic here
-    return "Начать игру"
-
+@app.route('/create',  methods=['GET', 'POST'])
+@login_required
+def add_quiz():
+    form = QuizForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        quiz = Quiz()
+        quiz.id_user = form.id_user.data
+        quiz.question = form.question.data
+        quiz.variants = form.variants.data
+        quiz.correct_answer = form.correct_answer.data
+        current_user.quiz.append(quiz)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('quiz.html', job='Добавление новости',
+                           form=form)
 
 @app.route('/geography')
 def geography():
