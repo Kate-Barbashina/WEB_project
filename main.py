@@ -1,8 +1,10 @@
-from flask import Flask, render_template, redirect, make_response, jsonify
+from flask import Flask, render_template, redirect, make_response, jsonify, request
 from flask_login import LoginManager, login_user, login_required, logout_user
 from data import db_session
 from data.users import User, LoginForm
 from forms.user import RegisterForm
+import random
+import sqlite3
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -36,12 +38,40 @@ def submit_form():
 
 @app.route('/geography')
 def geography():
-    return "Тут будет викторина по географии"
+    question = 'Вопросик'
+    ans = ['1', '2', '3']
+    ans_t = '4'
+    return render_template('after_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
 
 
-@app.route('/chemistry')
+def choice():
+    n = random.randint(1, 60)
+    con = sqlite3.connect('databaze')
+    cur = con.cursor()
+    result = cur.execute(f"""SELECT * FROM data
+               id = {n})""").fetchall()
+
+
+def truth():
+    pass
+
+
+def lie():
+    pass
+
+@app.route('/start_quiz')
 def chemistry():
-    return "Тут будет викторина по химии"
+    choice()
+    if request.method == 'GET':
+        return render_template('quiz.html')
+    elif request.method == 'POST':
+        print(request.form['class'])
+        return "Форма отправлена"
+
+
+#@app.route('/chemistry')
+#def chemistry():
+#    return "Тут будет викторина по химии"
 
 
 @app.route('/login', methods=['GET', 'POST'])
