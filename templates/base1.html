@@ -27,9 +27,9 @@
               {% endif %}
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               </ul>
-                <form action="/submit" method="post">
-                    <button type="button" class="btn btn-success">Создать свою викторину</button>
-                </form>
+              <a href="/create">
+                   <button type="button" class="btn btn-success">Создать свою викторину</button>
+              </a>
           </div>
         </nav>
     </header>
@@ -62,7 +62,9 @@
             </a>
         </div>
       </div>
-
     </div>
+    <main role="main" class="container">
+        {% block content %}{% endblock %}
+    </main>
 </body>
 </html>

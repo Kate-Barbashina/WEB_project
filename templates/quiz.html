@@ -1,47 +1,46 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-    crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
-    <title>Пример формы</title>
-  </head>
-  <body>
-    <h1>Выберите количество вопросов</h1>
-    <div>
-            <div class="form-group">
-                <label for="classSelect">В каком вы классе</label>
-                <select class="form-control" id="classSelect" name="class">
-                    {% for i in range(1, 51) %}
-                        <option>{{ i }}</option>
-                    {% endfor %}
+{% extends "base.html" %}
 
-                </select>
-             </div>
-              <a href="/start_quiz">
-                  <button type="submit" class="btn btn-primary">Начать викторину</button>
-              </a>
-  <div class="btn-group-vertical" role="group" aria-label="Vertical button group">
-    {% set index = 1 %}
-    {% set number = 1 %}
-    {% for i in answers %}
-      {% if i == true_question %}
-          <a href=f"/truth/{number}">
-              <button type="button" class="btn btn-primary">{{ i }}</button>
-          </a>
-         {{ number }} = {{ index }}
-      {% else %}
-         {{ index }} += 1
-          <a href=f"/lie/{number}">
-              <button type="button" class="btn btn-primary">{{ i }}</button>
-          </a>
-      {% endif %}
-    {% endfor %}
-  </div>
-    </div>
-  </body>
-</html>
+{% block content %}
+<h1>Добавление работы</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.id_user.label }}<br>
+        {{ form.id_user(class="form-control") }}<br>
+        {% for error in form.id_user.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.question.label }}<br>
+        {{ form.question(class="form-control") }}<br>
+        {% for error in form.question.errors %}
+            <p question="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.variants.label }}<br>
+        {{ form.variants(class="form-control") }}<br>
+        {% for error in form.variants.errors %}
+            <p variants="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.correct_answer.label }}<br>
+        {{ form.correct_answer(class="form-control") }}<br>
+        {% for error in form.correct_answer.errors %}
+            <p correct_answer="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}
