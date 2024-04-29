@@ -9,13 +9,17 @@
     crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
     <title>Пример формы</title>
+    <input type="hidden" id="true_answer" name="true_answer" value="0" />
   </head>
 
 <style>
-    .btn {
+    body {
+    background-image: url('static/img/fon.jpg');
+    }
+    .btn_2 {
     padding: 0.5em 2em;
-    background-color: #3914AF;
-    color: #f9f9fd
+    background-color: #4123a0;
+    color: #ffffff
     border: none;
     font-size: 0.9em;
     box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
@@ -23,15 +27,17 @@
     position: relative;
     top: 0; left: 0;
    }
-   .btn:focus {
+   .btn_2:focus {
     box-shadow: none;
     background-color: #FB000D;
+    color: #ffffff
     top: 3px; left: 3px;
    }
-    .btn_true  {
+
+    .btn_1 {
     padding: 0.5em 2em;
-    background-color: #3914AF;
-    color: #f9f9fd
+    background-color: #4123a0;
+    color: #ffffff
     border: none;
     font-size: 0.9em;
     box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
@@ -39,22 +45,34 @@
     position: relative;
     top: 0; left: 0;
    }
-   .btn_true :focus {
+   .btn_1:focus {
     box-shadow: none;
-    background-color: #00CC00;
+    background-color: #0ACF00;
+    color: #ffffff
     top: 3px; left: 3px;
    }
 
 </style>
 
 <body>
-<h2>{{ question }}</h2>
+    <h1>Внимание вопрос!</h1>
+    <h2>{{ question }}</h2>
+    <h2> </h2>
     <div class="d-grid gap-2 col-6 mx-auto">
         {% for i in answers %}
-            <button class="btn">{{ i }}</button>
+             {% if i == true_question %}
+                <button class="btn_1">{{ i }}</button>
+             {% else %}
+                <button class="btn_2">{{ i }}</button>
+             {% endif %}
         {% endfor %}
-        <button class="btn_true">{{ true_question }}</button>
     </div>
+    <a href="/end">
+        <button type="button" class="btn btn-outline-danger">Закончить викторину</button>
+    </a>
+    <a href="/geography">
+        <button style = "margin-left: 850px; " type="button" class="btn btn-outline-primary">Следующий вопрос</button>
+    </a>
 
 </body>
 </html>

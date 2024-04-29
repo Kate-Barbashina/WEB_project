@@ -1,9 +1,9 @@
-from flask import Flask, render_template, redirect, make_response, jsonify
+from flask import Flask, render_template, redirect, make_response, jsonify, request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User, LoginForm
 from forms.user import RegisterForm
-import random
+from random import *
 import sqlite3
 from data.quiz import Quiz
 from forms.quizz import QuizForm
@@ -50,28 +50,42 @@ def add_quiz():
     return render_template('quiz.html', job='Добавление новости',
                            form=form)
 
+@app.route('/before_geography')
+def before_geography():
+    global cnt_geo
+    cnt_geo = 0
+    if request.method == 'GET':
+        return render_template('before_geographe.html')
+    elif request.method == 'POST':
+        print(request.form['number'])
+        return geography
+
+
 @app.route('/geography')
 def geography():
-    question = 'Вопросик'
-    ans = ['1', '2', '3']
-    ans_t = '4'
+    n = 0
+    con = sqlite3.connect('databaze.sqlite')
+    cur = con.cursor()
+    result = cur.execute(f"""SELECT * FROM data""").fetchall()
+    question = result[n][0]
+    ans = [i for i in result[n][1].split()]
+    print(ans)
+    shuffle(ans)
+    ans_t = str(result[n][2])
+    print(ans_t)
     return render_template('after_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
 
 
-def choice():
-    n = random.randint(1, 60)
-    con = sqlite3.connect('databaze')
+def choice(n):
+    n = 0
+    con = sqlite3.connect('databaze.sqlite')
     cur = con.cursor()
-    result = cur.execute(f"""SELECT * FROM data
-               id = {n})""").fetchall()
+    result = cur.execute(f"""SELECT * FROM data""").fetchall()
 
 
-def truth():
-    pass
-
-
-def lie():
-    pass
+@app.route('/end')
+def end():
+    return render_template('end.html')
 
 @app.route('/start_quiz')
 def chemistry():
