@@ -13,6 +13,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init("db/quiz.db")
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key_2228'
+cnt_geo = 0
+MAX_CNT_GEO = 0
 
 
 def main():
@@ -50,37 +52,46 @@ def add_quiz():
     return render_template('quiz.html', job='Добавление новости',
                            form=form)
 
-@app.route('/before_geography')
+@app.route('/before_geography', methods=['POST', 'GET'])
 def before_geography():
+    global MAX_CNT_GEO
     global cnt_geo
     cnt_geo = 0
+    MAX_CNT_GEO = 0
     if request.method == 'GET':
         return render_template('before_geographe.html')
     elif request.method == 'POST':
-        print(request.form['number'])
-        return geography
+        MAX_CNT_GEO = int(request.form['number'])
+        n = 0
+        con = sqlite3.connect('databaze.sqlite')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM data""").fetchall()
+        shuffle(result)
+        question = result[n][0]
+        ans = [i for i in result[n][1].split()]
+        shuffle(ans)
+        ans_t = str(result[n][2])
+        return render_template('after_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
 
 
 @app.route('/geography')
 def geography():
-    n = 0
-    con = sqlite3.connect('databaze.sqlite')
-    cur = con.cursor()
-    result = cur.execute(f"""SELECT * FROM data""").fetchall()
-    question = result[n][0]
-    ans = [i for i in result[n][1].split()]
-    print(ans)
-    shuffle(ans)
-    ans_t = str(result[n][2])
-    print(ans_t)
-    return render_template('after_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
-
-
-def choice(n):
-    n = 0
-    con = sqlite3.connect('databaze.sqlite')
-    cur = con.cursor()
-    result = cur.execute(f"""SELECT * FROM data""").fetchall()
+    global MAX_CNT_GEO
+    global cnt_geo
+    cnt_geo += 1
+    if cnt_geo == MAX_CNT_GEO:
+        return render_template('end.html')
+    else:
+        n = 0
+        con = sqlite3.connect('databaze.sqlite')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM data""").fetchall()
+        shuffle(result)
+        question = result[n][0]
+        ans = [i for i in result[n][1].split()]
+        shuffle(ans)
+        ans_t = str(result[n][2])
+        return render_template('after_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
 
 
 @app.route('/end')
