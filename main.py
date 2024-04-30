@@ -7,6 +7,7 @@ from random import *
 import sqlite3
 from data.quiz import Quiz
 from forms.quizz import QuizForm
+import scrapy
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -71,7 +72,8 @@ def before_geography():
         ans = [i for i in result[n][1].split()]
         shuffle(ans)
         ans_t = str(result[n][2])
-        return render_template('after_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
+        time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        return render_template('after_quiz.html', time=time, answers=ans, true_question=ans_t, question=question, long=len(ans))
 
 
 @app.route('/geography')

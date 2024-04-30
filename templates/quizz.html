@@ -12,6 +12,24 @@
   </head>
 
 <body>
+<div class="wrapper">
+    <div class="timer">
+    <div class="time_line"></div>
+    <div class="time_body">
+        <div class="time_counter">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+            <span>6</span>
+            <span>7</span>
+            <span>8</span>
+            <span>9</span>
+            <span>10</span>
+        </div>
+    </div>
+</div>
 <h2>{{ question }}</h2>
     <div class="d-grid gap-2 col-6 mx-auto">
         {% for text in answers %}
@@ -20,6 +38,5 @@
             </a>
         {% endfor %}
     </div>
-
 </body>
 </html>
