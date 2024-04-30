@@ -112,9 +112,9 @@ def before_chemistry():
         return render_template('before_chemistry.html')
     elif request.method == 'POST':
         MAX_CNT_CHE = int(request.form['number'])
-        con = sqlite3.connect('databaze.sqlite')
+        con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
-        result = cur.execute(f"""SELECT * FROM data_chemistry""").fetchall()
+        result = cur.execute(f"""SELECT * FROM chemistry""").fetchall()
         shuffle(result)
         question = result[0][0]
         ans = [i for i in result[0][1].split()]
@@ -131,9 +131,9 @@ def chemistry():
     if cnt_che == MAX_CNT_CHE:
         return render_template('end.html')
     else:
-        con = sqlite3.connect('databaze.sqlite')
+        con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
-        result = cur.execute(f"""SELECT * FROM data_chemistry""").fetchall()
+        result = cur.execute(f"""SELECT * FROM chemistry""").fetchall()
         shuffle(result)
         question = result[0][0]
         ans = [i for i in result[0][1].split()]
