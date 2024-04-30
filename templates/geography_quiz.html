@@ -79,6 +79,20 @@
     <a href="/geography">
         <button style = "margin-left: 850px; " type="button" class="btn btn-outline-primary">Пропустить вопрос</button>
     </a>
-
 </body>
+<div class="wrapper">
+    <div class="timer">
+    <div class="time_line"></div>
+    <div class="time_body">
+        <div class="time_counter">
+            {% for i in time %}
+                {% if i == 10 %}
+                    <meta http-equiv="refresh" content="10; url=http://127.0.0.1:5000/end">
+                {% endif %}
+                <span>{{i}}</span>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+</div>
 </html>
