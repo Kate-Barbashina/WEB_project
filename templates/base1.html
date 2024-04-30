@@ -43,9 +43,8 @@
     <h1> Добро пожаловать в нашу викторину</h1>
     <h2> Вы можете найти викторину для себя или создать свою</h2>
 
-    <div class="row">
-      <div class="col-sm-6 mb-3 mb-sm-0">
-        <div class="card" style="width: 18rem;">
+<div class="row">
+        <div class="card" style="width: 23rem;">
             <img src="/static/img/geo.jpg" class="card-img-top" alt="...">
               <div class="card-body">
                 <h5 class="card-title">Викторина по географии</h5>
@@ -55,10 +54,7 @@
                 </a>
               </div>
         </div>
-      </div>
-
-      <div class="col-sm-6">
-        <div class="card" style="width: 18rem;">
+        <div class="card" style="width: 23rem;">
           <img src="/static/img/chemistry.jpg" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">Викторина по химии</h5>
@@ -66,9 +62,20 @@
             <a href="/chemistry">
                 <button type="button" class="btn btn-primary">Начать</button>
             </a>
+          </div>
         </div>
-      </div>
-    </div>
+        <div class="card" style="width: 23rem;">
+            <img src="/static/img/erudition.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">Викторина по общим знаниям</h5>
+                <p class="card-text">Вы сможете проверить свою эрудицию. ВАЖНО: викторина на время, надо пройти
+                как можно больше вопросов за ограниченное время.</p>
+                <a href="/before_erudition">
+                    <button type="button" class="btn btn-primary">Начать</button>
+                </a>
+              </div>
+        </div>
+</div>
     <main role="main" class="container">
         {% block content %}{% endblock %}
     </main>

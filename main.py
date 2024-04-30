@@ -54,6 +54,7 @@ def add_quiz():
     return render_template('quiz.html', job='Добавление новости',
                            form=form)
 
+
 @app.route('/before_geography', methods=['POST', 'GET'])
 def before_geography():
     global MAX_CNT_GEO
@@ -65,14 +66,14 @@ def before_geography():
     elif request.method == 'POST':
         MAX_CNT_GEO = int(request.form['number'])
         n = 0
-        con = sqlite3.connect('databaze.sqlite')
+        con = sqlite3.connect('geo.sqlite')
         cur = con.cursor()
-        result = cur.execute(f"""SELECT * FROM data""").fetchall()
+        result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
         shuffle(result)
-        question = result[0][0]
-        ans = [i for i in result[0][1].split()]
+        question = result[0][1]
+        ans = [i for i in result[0][2].split()]
         shuffle(ans)
-        ans_t = str(result[0][2])
+        ans_t = str(result[0][3])
         time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         return render_template('geography_quiz.html', time=time, answers=ans, true_question=ans_t, question=question, long=len(ans))
 
@@ -86,6 +87,32 @@ def geography():
         return render_template('end.html')
     else:
         n = 0
+        con = sqlite3.connect('geo.sqlite')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
+        shuffle(result)
+        question = result[0][1]
+        ans = [i for i in result[0][2].split()]
+        shuffle(ans)
+        ans_t = str(result[0][3])
+        return render_template('geography_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
+
+
+@app.route('/end')
+def end():
+    return render_template('end.html')
+
+
+@app.route('/before_erudition', methods=['POST', 'GET'])
+def before_erudition():
+    global MAX_CNT_ER
+    global cnt_er
+    cnt_er = 0
+    if request.method == 'GET':
+        return render_template('before_erudition.html')
+    elif request.method == 'POST':
+        MAX_CNT_ER = int(request.form['time'])
+        n = 0
         con = sqlite3.connect('databaze.sqlite')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM data""").fetchall()
@@ -94,12 +121,31 @@ def geography():
         ans = [i for i in result[0][1].split()]
         shuffle(ans)
         ans_t = str(result[0][2])
-        return render_template('geography_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
+        time = MAX_CNT_ER
+        return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question, long=len(ans))
 
 
-@app.route('/end')
-def end():
-    return render_template('end.html')
+@app.route('/erudition')
+def erudition():
+    global MAX_CNT_ER
+    global cnt_er
+    cnt_er += 1
+    time = MAX_CNT_ER
+    n = 0
+    con = sqlite3.connect('databaze.sqlite')
+    cur = con.cursor()
+    result = cur.execute(f"""SELECT * FROM data""").fetchall()
+    shuffle(result)
+    question = result[0][0]
+    ans = [i for i in result[0][1].split()]
+    shuffle(ans)
+    ans_t = str(result[0][2])
+    if cnt_geo == 1:
+        return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question, long=len(ans))
+    else:
+        return render_template('erudition_quiz.html', answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
+
 
 
 @app.route('/before_chemistry', methods=['POST', 'GET'])
