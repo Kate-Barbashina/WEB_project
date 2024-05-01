@@ -1,12 +1,14 @@
-from flask import Flask, render_template, redirect, make_response, jsonify, request
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from data import db_session
-from data.users import User, LoginForm
-from forms.user import RegisterForm
-from random import *
 import sqlite3
+from random import *
+
+from flask import Flask, render_template, redirect, request
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+
+from data import db_session
 from data.quiz import Quiz
+from data.users import User, LoginForm
 from forms.quizz import QuizForm
+from forms.user import RegisterForm
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -36,7 +38,7 @@ def index():
     return render_template("base1.html")
 
 
-@app.route('/create',  methods=['GET', 'POST'])
+@app.route('/create', methods=['GET', 'POST'])
 @login_required
 def add_quiz():
     form = QuizForm()
@@ -75,7 +77,8 @@ def before_geography():
         shuffle(ans)
         ans_t = str(result[0][3])
         time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        return render_template('geography_quiz.html', time=time, answers=ans, true_question=ans_t, question=question, long=len(ans))
+        return render_template('geography_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
 
 
 @app.route('/geography')
@@ -95,7 +98,8 @@ def geography():
         ans = [i for i in result[0][2].split()]
         shuffle(ans)
         ans_t = str(result[0][3])
-        return render_template('geography_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
+        return render_template('geography_quiz.html', answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
 
 
 @app.route('/end')
@@ -122,7 +126,8 @@ def before_erudition():
         shuffle(ans)
         ans_t = str(result[0][2])
         time = MAX_CNT_ER
-        return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question, long=len(ans))
+        return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
 
 
 @app.route('/erudition')
@@ -140,12 +145,8 @@ def erudition():
     ans = [i for i in result[0][1].split()]
     shuffle(ans)
     ans_t = str(result[0][2])
-    if cnt_geo == 1:
-        return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question, long=len(ans))
-    else:
-        return render_template('erudition_quiz.html', answers=ans, true_question=ans_t, question=question,
-                               long=len(ans))
-
+    return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
+                           long=len(ans))
 
 
 @app.route('/before_chemistry', methods=['POST', 'GET'])
@@ -166,7 +167,8 @@ def before_chemistry():
         ans = [i for i in result[0][1].split()]
         shuffle(ans)
         ans_t = str(result[0][2])
-        return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
+        return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
 
 
 @app.route('/chemistry')
@@ -185,7 +187,8 @@ def chemistry():
         ans = [i for i in result[0][1].split()]
         shuffle(ans)
         ans_t = str(result[0][2])
-        return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question, long=len(ans))
+        return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -233,6 +236,7 @@ def reqister():
 def logout():
     logout_user()
     return redirect("/")
+
 
 if __name__ == '__main__':
     main()
