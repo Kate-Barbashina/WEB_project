@@ -126,10 +126,9 @@ def before_erudition():
         result = cur.execute(f"""SELECT * FROM data""").fetchall()
         shuffle(result)
         question = result[0][0]
-        ans = [i for i in result[0][2].split()]
-        ans_t = str(result[0][3])
-        ans.append(ans_t)
+        ans = [i for i in result[0][1].split()]
         shuffle(ans)
+        ans_t = str(result[0][2])
         time = MAX_CNT_ER
         return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
                                long=len(ans))
@@ -147,10 +146,9 @@ def erudition():
     result = cur.execute(f"""SELECT * FROM data""").fetchall()
     shuffle(result)
     question = result[0][0]
-    ans = [i for i in result[0][2].split()]
-    ans_t = str(result[0][3])
-    ans.append(ans_t)
+    ans = [i for i in result[0][1].split()]
     shuffle(ans)
+    ans_t = str(result[0][2])
     return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
                            long=len(ans))
 
