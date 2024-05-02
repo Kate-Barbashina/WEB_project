@@ -19,6 +19,8 @@ cnt_geo = 0
 MAX_CNT_GEO = 0
 cnt_che = 0
 MAX_CNT_CHE = 0
+MAX_CNT_ER = 0
+cnt_er = 0
 
 
 def main():
@@ -74,8 +76,9 @@ def before_geography():
         shuffle(result)
         question = result[0][1]
         ans = [i for i in result[0][2].split()]
-        shuffle(ans)
         ans_t = str(result[0][3])
+        ans.append(ans_t)
+        shuffle(ans)
         time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         return render_template('geography_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
                                long=len(ans))
@@ -87,7 +90,7 @@ def geography():
     global cnt_geo
     cnt_geo += 1
     if cnt_geo == MAX_CNT_GEO:
-        return render_template('end.html')
+        return render_template('end_ura.html')
     else:
         n = 0
         con = sqlite3.connect('geo.sqlite')
@@ -96,15 +99,16 @@ def geography():
         shuffle(result)
         question = result[0][1]
         ans = [i for i in result[0][2].split()]
-        shuffle(ans)
         ans_t = str(result[0][3])
+        ans.append(ans_t)
+        shuffle(ans)
         return render_template('geography_quiz.html', answers=ans, true_question=ans_t, question=question,
                                long=len(ans))
 
 
 @app.route('/end')
 def end():
-    return render_template('end.html')
+    return render_template('end_ura.html')
 
 
 @app.route('/before_erudition', methods=['POST', 'GET'])
@@ -122,9 +126,10 @@ def before_erudition():
         result = cur.execute(f"""SELECT * FROM data""").fetchall()
         shuffle(result)
         question = result[0][0]
-        ans = [i for i in result[0][1].split()]
+        ans = [i for i in result[0][2].split()]
+        ans_t = str(result[0][3])
+        ans.append(ans_t)
         shuffle(ans)
-        ans_t = str(result[0][2])
         time = MAX_CNT_ER
         return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
                                long=len(ans))
@@ -142,9 +147,10 @@ def erudition():
     result = cur.execute(f"""SELECT * FROM data""").fetchall()
     shuffle(result)
     question = result[0][0]
-    ans = [i for i in result[0][1].split()]
+    ans = [i for i in result[0][2].split()]
+    ans_t = str(result[0][3])
+    ans.append(ans_t)
     shuffle(ans)
-    ans_t = str(result[0][2])
     return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
                            long=len(ans))
 
@@ -167,8 +173,12 @@ def before_chemistry():
         ans = [i for i in result[0][1].split()]
         shuffle(ans)
         ans_t = str(result[0][2])
-        return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
-                               long=len(ans))
+        if question == 'Пламя какого элемента изображено на картинке':
+            return render_template('chemistry_quiz_img.html', answers=ans, true_question=ans_t, question=question,
+                                   long=len(ans))
+        else:
+            return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
+                                   long=len(ans))
 
 
 @app.route('/chemistry')
@@ -177,7 +187,7 @@ def chemistry():
     global cnt_che
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
-        return render_template('end.html')
+        return render_template('end_ura.html')
     else:
         con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
@@ -187,8 +197,12 @@ def chemistry():
         ans = [i for i in result[0][1].split()]
         shuffle(ans)
         ans_t = str(result[0][2])
-        return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
-                               long=len(ans))
+        if question == 'Пламя какого элемента изображено на картинке':
+            return render_template('chemistry_quiz_img.html', answers=ans, true_question=ans_t, question=question,
+                                   long=len(ans))
+        else:
+            return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
+                                   long=len(ans))
 
 
 @app.route('/login', methods=['GET', 'POST'])
