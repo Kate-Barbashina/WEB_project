@@ -11,13 +11,13 @@
     <title>Пример формы</title>
   </head>
   <body>
-    <h1>Сейчас вы начнете викторину по географии</h1>
+    <h1>Сейчас вы начнете викторину от пользователей</h1>
     <h2>Но перед этим вам нужно выбрать количество вопросов</h2>
     <div>
         <form class="login_form" method="post">
             <div class="form-group">
                 <select class="form-control" id="classSelect" name="number">
-                    {% for i in range(1, 61) %}
+                    {% for i in range(1, 6) %}
                         <option>{{ i }}</option>
                     {% endfor %}
                 </select>

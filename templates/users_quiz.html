@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+    crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <title>Пример формы</title>
+    <input type="hidden" id="true_answer" name="true_answer" value="0" />
+  </head>
+
+<style>
+    body {
+    background-image: url('static/img/fon.jpg');
+    }
+    .btn_2 {
+    padding: 0.5em 2em;
+    background-color: #4123a0;
+    color: #ffffff
+    border: none;
+    font-size: 0.9em;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    transition: 0.3s;
+    position: relative;
+    top: 0; left: 0;
+    width: 650px;
+   }
+   .btn_2:focus {
+    box-shadow: none;
+    background-color: #FB000D;
+    color: #ffffff
+    top: 3px; left: 3px;
+   }
+
+    .btn_1 {
+    padding: 0.5em 2em;
+    background-color: #4123a0;
+    color: #ffffff
+    border: none;
+    font-size: 0.9em;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    transition: 0.3s;
+    position: relative;
+    top: 0; left: 0;
+    width: 650px;
+   }
+   .btn_1:focus {
+    box-shadow: none;
+    background-color: #0ACF00;
+    color: #ffffff
+    top: 3px; left: 3px;
+   }
+
+</style>
+
+<body>
+    {% set a = 0 %}
+    <h1>Внимание вопрос!</h1>
+    <h2>{{ question }}</h2>
+    <h2> </h2>
+    <div class="d-grid gap-2 col-6 mx-auto">
+        {% for i in answers %}
+             {% if i == true_question %}
+                <a href="/users">
+                    <button class="btn_1">{{ i }}</button>
+                </a>
+             {% else %}
+                <a href="/users">
+                    <button class="btn_2">{{ i }}</button>
+                </a>
+             {% endif %}
+        {% endfor %}
+    </div>
+    <a href="/end">
+        <button type="button" class="btn btn-outline-danger">Закончить викторину</button>
+    </a>
+    <a href="/users">
+        <button style = "margin-left: 850px; " type="button" class="btn btn-outline-primary">Пропустить вопрос</button>
+    </a>
+</body>
+<div class="wrapper">
+    <div class="timer">
+    <div class="time_line"></div>
+    <div class="time_body">
+        <div class="time_counter">
+            {% for i in range(1, 11) %}
+                {% if i == 10 %}
+                    <meta http-equiv="refresh" content="10; url=http://127.0.0.1:5000/end">
+                {% endif %}
+                <span>{{i}}</span>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+</div>
+</html>

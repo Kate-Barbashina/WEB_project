@@ -111,6 +111,53 @@ def end():
     return render_template('end_ura.html')
 
 
+@app.route('/before_users', methods=['POST', 'GET'])
+def before_users():
+    global MAX_CNT_US
+    global cnt_us
+    cnt_us = 0
+    MAX_CNT_US = 0
+    if request.method == 'GET':
+        return render_template('before_users.html')
+    elif request.method == 'POST':
+        MAX_CNT_US = int(request.form['number'])
+        n = 0
+        con = sqlite3.connect('db/quiz.db')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
+        shuffle(result)
+        question = result[0][2]
+        ans = [i for i in result[0][3].split()]
+        ans_t = str(result[0][4])
+        ans.append(ans_t)
+        shuffle(ans)
+        time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        return render_template('users_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
+
+
+@app.route('/users')
+def users():
+    global MAX_CNT_US
+    global cnt_us
+    cnt_us += 1
+    if cnt_us == MAX_CNT_US:
+        return render_template('end_ura.html')
+    else:
+        n = 0
+        con = sqlite3.connect('db/quiz.db')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
+        shuffle(result)
+        question = result[0][2]
+        ans = [i for i in result[0][3].split()]
+        ans_t = str(result[0][4])
+        ans.append(ans_t)
+        shuffle(ans)
+        return render_template('users_quiz.html', answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
+
+
 @app.route('/before_erudition', methods=['POST', 'GET'])
 def before_erudition():
     global MAX_CNT_ER
