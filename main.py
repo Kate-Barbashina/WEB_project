@@ -17,8 +17,11 @@ db_session.global_init("db/quiz.db")
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key_2228'
 cnt_geo = 0
 MAX_CNT_GEO = 0
+CORRECT_GEO = 0
 cnt_che = 0
 MAX_CNT_CHE = 0
+CORRECT_CHE = 0
+CORRECT_ER = 0
 MAX_CNT_ER = 0
 cnt_er = 0
 
@@ -75,7 +78,7 @@ def before_geography():
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
         shuffle(result)
         question = result[0][1]
-        ans = [i for i in result[0][2].split()]
+        ans = [i for i in result[0][2].split(',')]
         ans_t = str(result[0][3])
         ans.append(ans_t)
         shuffle(ans)
@@ -98,7 +101,7 @@ def geography():
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
         shuffle(result)
         question = result[0][1]
-        ans = [i for i in result[0][2].split()]
+        ans = [i for i in result[0][2].split(',')]
         ans_t = str(result[0][3])
         ans.append(ans_t)
         shuffle(ans)
@@ -173,7 +176,7 @@ def before_erudition():
         result = cur.execute(f"""SELECT * FROM data""").fetchall()
         shuffle(result)
         question = result[0][0]
-        ans = [i for i in result[0][1].split()]
+        ans = [i for i in result[0][1].split(',')]
         shuffle(ans)
         ans_t = str(result[0][2])
         time = MAX_CNT_ER
@@ -193,7 +196,7 @@ def erudition():
     result = cur.execute(f"""SELECT * FROM data""").fetchall()
     shuffle(result)
     question = result[0][0]
-    ans = [i for i in result[0][1].split()]
+    ans = [i for i in result[0][1].split(',')]
     shuffle(ans)
     ans_t = str(result[0][2])
     return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
@@ -248,6 +251,32 @@ def chemistry():
         else:
             return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
                                    long=len(ans))
+
+@app.route('/chemistry_true')
+def chemistry_true():
+    global CORRECT_CHE
+    CORRECT_CHE += 1
+    global MAX_CNT_CHE
+    global cnt_che
+    cnt_che += 1
+    if cnt_che == MAX_CNT_CHE:
+        return render_template('end_ura.html')
+    else:
+        con = sqlite3.connect('chem.sqlite')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM chemistry""").fetchall()
+        shuffle(result)
+        question = result[0][0]
+        ans = [i for i in result[0][1].split()]
+        shuffle(ans)
+        ans_t = str(result[0][2])
+        if question == 'Пламя какого элемента изображено на картинке':
+            return render_template('chemistry_quiz_img.html', answers=ans, true_question=ans_t, question=question,
+                                   long=len(ans))
+        else:
+            return render_template('chemistry_quiz.html', answers=ans, true_question=ans_t, question=question,
+                                   long=len(ans))
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
