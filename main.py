@@ -1,6 +1,7 @@
 import sqlite3
 from random import *
 
+import requests
 from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
@@ -19,9 +20,20 @@ cnt_geo, cnt_che, cnt_er, cnt_us = 0, 0, 0, 0
 MAX_CNT_GEO, MAX_CNT_CHE, MAX_CNT_ER, MAX_CNT_US = 0, 0, 0, 0
 CORRECT_GEO, CORRECT_CHE, CORRECT_ER, CORRECT_US = 0, 0, 0, 0
 
+def geo_extra():
+    map_request = "https://static-maps.yandex.ru/1.x/?ll=137.685869,-27.182713&spn=20.116457,20.10619&l=sat"
+    response = requests.get(map_request)
+    if not response:
+        print("Ошибка выполнения запроса:")
+    map_file = "static/img/map.jpg"
+    with open(map_file, "wb") as file:
+        file.write(response.content)
+        file.close()
+
 
 def main():
     db_session.global_init("db/quiz.db")
+    geo_extra()
     app.run()
 
 
@@ -77,8 +89,13 @@ def before_geography():
         ans.append(ans_t)
         shuffle(ans)
         time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        return render_template('geography_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
+        if question == 'Какой континент изображен на картинке':
+            return render_template('geography_quiz_img.html', time=time, answers=ans, true_question=ans_t, question=question,
                                long=len(ans))
+        else:
+            return render_template('geography_quiz.html', time=time, answers=ans, true_question=ans_t,
+                                   question=question,
+                                   long=len(ans))
 
 
 @app.route('/geography')
@@ -101,8 +118,15 @@ def geography():
         ans_t = str(result[0][3])
         ans.append(ans_t)
         shuffle(ans)
-        return render_template('geography_quiz.html', answers=ans, true_question=ans_t, question=question,
-                               long=len(ans))
+        time = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        if question == 'Какой континент изображен на картинке':
+            return render_template('geography_quiz_img.html', time=time, answers=ans, true_question=ans_t,
+                                   question=question,
+                                   long=len(ans))
+        else:
+            return render_template('geography_quiz.html', time=time, answers=ans, true_question=ans_t,
+                                   question=question,
+                                   long=len(ans))
 
 @app.route('/geography_true')
 def geography_true():
@@ -162,7 +186,7 @@ def before_users():
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
         shuffle(result)
         question = result[0][2]
-        ans = [i for i in result[0][3].split()]
+        ans = [i for i in result[0][3].split(',')]
         ans_t = str(result[0][4])
         ans.append(ans_t)
         shuffle(ans)
@@ -187,7 +211,7 @@ def users():
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
         shuffle(result)
         question = result[0][2]
-        ans = [i for i in result[0][3].split()]
+        ans = [i for i in result[0][3].split(',')]
         ans_t = str(result[0][4])
         ans.append(ans_t)
         shuffle(ans)

@@ -57,17 +57,20 @@
 </style>
 
 <body>
+    {% set a = 0 %}
     <h1>Внимание вопрос!</h1>
     <h2>{{ question }}</h2>
-    <img src="static/img/ba.jpg" />
+<!--    <img class='austro' src='map.jpg'>-->
+<!--    <img class='austro' src='{{img}}'>-->
+    <img class='austro' src="static/img/map.jpg">
     <div class="d-grid gap-2 col-6 mx-auto">
         {% for i in answers %}
              {% if i == true_question %}
-                <a href="/chemistry_true">
+                <a href="/geography">
                     <button class="btn_1">{{ i }}</button>
                 </a>
              {% else %}
-                <a href="/chemistry">
+                <a href="/geography">
                     <button class="btn_2">{{ i }}</button>
                 </a>
              {% endif %}
