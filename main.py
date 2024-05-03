@@ -15,15 +15,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db_session.global_init("db/quiz.db")
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key_2228'
-cnt_geo = 0
-MAX_CNT_GEO = 0
-CORRECT_GEO = 0
-cnt_che = 0
-MAX_CNT_CHE = 0
-CORRECT_CHE = 0
-CORRECT_ER = 0
-MAX_CNT_ER = 0
-cnt_er = 0
+cnt_geo, cnt_che, cnt_er, cnt_us = 0, 0, 0, 0
+MAX_CNT_GEO, MAX_CNT_CHE, MAX_CNT_ER, MAX_CNT_US = 0, 0, 0, 0
+CORRECT_GEO, CORRECT_CHE, CORRECT_ER, CORRECT_US = 0, 0, 0, 0
 
 
 def main():
@@ -89,11 +83,38 @@ def before_geography():
 
 @app.route('/geography')
 def geography():
-    global MAX_CNT_GEO
     global cnt_geo
     cnt_geo += 1
     if cnt_geo == MAX_CNT_GEO:
-        return render_template('end_ura.html')
+        if CORRECT_GEO == MAX_CNT_GEO:
+            return render_template('end_ura.html')
+        else:
+            return render_template('end_ne_ura.html')
+    else:
+        n = 0
+        con = sqlite3.connect('geo.sqlite')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
+        shuffle(result)
+        question = result[0][1]
+        ans = [i for i in result[0][2].split(',')]
+        ans_t = str(result[0][3])
+        ans.append(ans_t)
+        shuffle(ans)
+        return render_template('geography_quiz.html', answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
+
+@app.route('/geography_true')
+def geography_true():
+    global cnt_geo
+    global CORRECT_GEO
+    CORRECT_GEO += 1
+    cnt_geo += 1
+    if cnt_geo == MAX_CNT_GEO:
+        if CORRECT_GEO == MAX_CNT_GEO:
+            return render_template('end_ura.html')
+        else:
+            return render_template('end_ne_ura.html')
     else:
         n = 0
         con = sqlite3.connect('geo.sqlite')
@@ -111,7 +132,18 @@ def geography():
 
 @app.route('/end')
 def end():
-    return render_template('end_ura.html')
+    global CORRECT_ER
+    global CORRECT_GEO
+    global CORRECT_CHE
+    global CORRECT_US
+    if CORRECT_CHE == MAX_CNT_CHE or CORRECT_GEO == MAX_CNT_GEO or CORRECT_ER == MAX_CNT_ER or MAX_CNT_US == CORRECT_US:
+        CORRECT_ER = 0
+        CORRECT_GEO = 0
+        CORRECT_CHE = 0
+        CORRECT_US = 0
+        return render_template('end_ura.html')
+    else:
+        return render_template('end_ne_ura.html')
 
 
 @app.route('/before_users', methods=['POST', 'GET'])
@@ -141,11 +173,39 @@ def before_users():
 
 @app.route('/users')
 def users():
-    global MAX_CNT_US
     global cnt_us
     cnt_us += 1
     if cnt_us == MAX_CNT_US:
-        return render_template('end_ura.html')
+        if CORRECT_US == MAX_CNT_US:
+            return render_template('end_ura.html')
+        else:
+            return render_template('end_ne_ura.html')
+    else:
+        n = 0
+        con = sqlite3.connect('db/quiz.db')
+        cur = con.cursor()
+        result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
+        shuffle(result)
+        question = result[0][2]
+        ans = [i for i in result[0][3].split()]
+        ans_t = str(result[0][4])
+        ans.append(ans_t)
+        shuffle(ans)
+        return render_template('users_quiz.html', answers=ans, true_question=ans_t, question=question,
+                               long=len(ans))
+
+
+@app.route('/users_true')
+def users_true():
+    global cnt_us
+    global CORRECT_US
+    CORRECT_US += 1
+    cnt_us += 1
+    if cnt_us == MAX_CNT_US:
+        if CORRECT_US == MAX_CNT_US:
+            return render_template('end_ura.html')
+        else:
+            return render_template('end_ne_ura.html')
     else:
         n = 0
         con = sqlite3.connect('db/quiz.db')
@@ -186,7 +246,6 @@ def before_erudition():
 
 @app.route('/erudition')
 def erudition():
-    global MAX_CNT_ER
     global cnt_er
     cnt_er += 1
     time = MAX_CNT_ER
@@ -202,6 +261,24 @@ def erudition():
     return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
                            long=len(ans))
 
+@app.route('/erudition_true')
+def erudition_true():
+    global cnt_er
+    global CORRECT_ER
+    CORRECT_ER += 1
+    cnt_er += 1
+    time = MAX_CNT_ER
+    n = 0
+    con = sqlite3.connect('databaze.sqlite')
+    cur = con.cursor()
+    result = cur.execute(f"""SELECT * FROM data""").fetchall()
+    shuffle(result)
+    question = result[0][0]
+    ans = [i for i in result[0][1].split(',')]
+    shuffle(ans)
+    ans_t = str(result[0][2])
+    return render_template('erudition_quiz.html', time=time, answers=ans, true_question=ans_t, question=question,
+                           long=len(ans))
 
 @app.route('/before_chemistry', methods=['POST', 'GET'])
 def before_chemistry():
@@ -231,7 +308,6 @@ def before_chemistry():
 
 @app.route('/chemistry')
 def chemistry():
-    global MAX_CNT_CHE
     global cnt_che
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
@@ -256,11 +332,13 @@ def chemistry():
 def chemistry_true():
     global CORRECT_CHE
     CORRECT_CHE += 1
-    global MAX_CNT_CHE
     global cnt_che
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
-        return render_template('end_ura.html')
+        if CORRECT_CHE == MAX_CNT_CHE:
+            return render_template('end_ura.html')
+        else:
+            return render_template('end_ne_ura.html')
     else:
         con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
