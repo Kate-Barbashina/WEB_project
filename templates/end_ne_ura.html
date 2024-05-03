@@ -14,10 +14,12 @@
 
 <body>
     <h1>Печаль</h1>
-    <h2>К сожалению вы не смогли правильно ответить на все вопросы</h2>
+    <h2>К сожалению, вы не смогли правильно ответить на все вопросы</h2>
     <center>
         <img src="static/img/ne_ura.jpg" width='250' height='250' />
     </center>
+    <h2>Правильных ответов - {{ true_answer }}</h2>
+    <h2>Неправильных ответов - {{ false_answer }}</h2>
 
     <a href="/">
         <button style = "margin-left: 850px; " type="button" class="btn btn-outline-primary">Вернуться на главную</button>

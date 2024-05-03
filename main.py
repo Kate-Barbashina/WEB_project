@@ -161,13 +161,33 @@ def end():
     global CORRECT_CHE
     global CORRECT_US
     if CORRECT_CHE == MAX_CNT_CHE or CORRECT_GEO == MAX_CNT_GEO or CORRECT_ER == MAX_CNT_ER or MAX_CNT_US == CORRECT_US:
-        CORRECT_ER = 0
-        CORRECT_GEO = 0
-        CORRECT_CHE = 0
-        CORRECT_US = 0
+        CORRECT_GEO, CORRECT_CHE, CORRECT_ER, CORRECT_US = 0, 0, 0, 0
         return render_template('end_ura.html')
-    else:
-        return render_template('end_ne_ura.html')
+    if CORRECT_CHE != MAX_CNT_CHE:
+        true_answer = CORRECT_CHE
+        false_answer = MAX_CNT_CHE - CORRECT_CHE
+        CORRECT_CHE = 0
+        print(true_answer, false_answer)
+        return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
+    if CORRECT_GEO != MAX_CNT_GEO:
+        true_answer = CORRECT_GEO
+        false_answer = MAX_CNT_GEO - CORRECT_GEO
+        CORRECT_GEO = 0
+        print(true_answer, false_answer)
+        return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
+    if CORRECT_ER != MAX_CNT_ER:
+        true_answer = CORRECT_ER
+        false_answer = MAX_CNT_ER - CORRECT_ER
+        CORRECT_ER = 0
+        print(true_answer, false_answer)
+        return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
+    if CORRECT_US != MAX_CNT_US:
+        true_answer = CORRECT_US
+        false_answer = MAX_CNT_US - CORRECT_US
+        CORRECT_US = 0
+        print(true_answer, false_answer)
+        return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
+
 
 
 @app.route('/before_users', methods=['POST', 'GET'])
@@ -335,7 +355,10 @@ def chemistry():
     global cnt_che
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
-        return render_template('end_ura.html')
+        if CORRECT_CHE == MAX_CNT_CHE:
+            return render_template('end_ura.html')
+        else:
+            return render_template('end_ne_ura.html')
     else:
         con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
