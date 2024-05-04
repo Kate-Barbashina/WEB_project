@@ -101,12 +101,17 @@ def before_geography():
 @app.route('/geography')
 def geography():
     global cnt_geo
+    global CORRECT_GEO
     cnt_geo += 1
     if cnt_geo == MAX_CNT_GEO:
         if CORRECT_GEO == MAX_CNT_GEO:
+            CORRECT_GEO = 0
             return render_template('end_ura.html')
         else:
-            return render_template('end_ne_ura.html')
+            true_answer = CORRECT_GEO
+            false_answer = MAX_CNT_GEO - CORRECT_GEO
+            CORRECT_GEO = 0
+            return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         n = 0
         con = sqlite3.connect('geo.sqlite')
@@ -136,9 +141,13 @@ def geography_true():
     cnt_geo += 1
     if cnt_geo == MAX_CNT_GEO:
         if CORRECT_GEO == MAX_CNT_GEO:
+            CORRECT_GEO = 0
             return render_template('end_ura.html')
         else:
-            return render_template('end_ne_ura.html')
+            true_answer = CORRECT_GEO
+            false_answer = MAX_CNT_GEO - CORRECT_GEO
+            CORRECT_GEO = 0
+            return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         n = 0
         con = sqlite3.connect('geo.sqlite')
@@ -167,25 +176,21 @@ def end():
         true_answer = CORRECT_CHE
         false_answer = MAX_CNT_CHE - CORRECT_CHE
         CORRECT_CHE = 0
-        print(true_answer, false_answer)
         return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     if CORRECT_GEO != MAX_CNT_GEO:
         true_answer = CORRECT_GEO
         false_answer = MAX_CNT_GEO - CORRECT_GEO
         CORRECT_GEO = 0
-        print(true_answer, false_answer)
         return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
     if CORRECT_ER != MAX_CNT_ER:
         true_answer = CORRECT_ER
         false_answer = MAX_CNT_ER - CORRECT_ER
         CORRECT_ER = 0
-        print(true_answer, false_answer)
         return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
     if CORRECT_US != MAX_CNT_US:
         true_answer = CORRECT_US
         false_answer = MAX_CNT_US - CORRECT_US
         CORRECT_US = 0
-        print(true_answer, false_answer)
         return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
 
 
@@ -218,12 +223,17 @@ def before_users():
 @app.route('/users')
 def users():
     global cnt_us
+    global CORRECT_US
     cnt_us += 1
     if cnt_us == MAX_CNT_US:
         if CORRECT_US == MAX_CNT_US:
+            CORRECT_US = 0
             return render_template('end_ura.html')
         else:
-            return render_template('end_ne_ura.html')
+            true_answer = CORRECT_US
+            false_answer = MAX_CNT_US - CORRECT_US
+            CORRECT_US = 0
+            return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         n = 0
         con = sqlite3.connect('db/quiz.db')
@@ -247,9 +257,13 @@ def users_true():
     cnt_us += 1
     if cnt_us == MAX_CNT_US:
         if CORRECT_US == MAX_CNT_US:
+            CORRECT_US = 0
             return render_template('end_ura.html')
         else:
-            return render_template('end_ne_ura.html')
+            true_answer = CORRECT_US
+            false_answer = MAX_CNT_US - CORRECT_US
+            CORRECT_US = 0
+            return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         n = 0
         con = sqlite3.connect('db/quiz.db')
@@ -353,12 +367,17 @@ def before_chemistry():
 @app.route('/chemistry')
 def chemistry():
     global cnt_che
+    global CORRECT_CHE
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
         if CORRECT_CHE == MAX_CNT_CHE:
+            CORRECT_CHE = 0
             return render_template('end_ura.html')
         else:
-            return render_template('end_ne_ura.html')
+            true_answer = CORRECT_CHE
+            false_answer = MAX_CNT_CHE - CORRECT_CHE
+            CORRECT_CHE = 0
+            return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
@@ -383,9 +402,13 @@ def chemistry_true():
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
         if CORRECT_CHE == MAX_CNT_CHE:
+            CORRECT_CHE = 0
             return render_template('end_ura.html')
         else:
-            return render_template('end_ne_ura.html')
+            true_answer = CORRECT_CHE
+            false_answer = MAX_CNT_CHE - CORRECT_CHE
+            CORRECT_CHE = 0
+            return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
