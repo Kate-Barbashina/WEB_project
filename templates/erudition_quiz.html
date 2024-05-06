@@ -86,17 +86,18 @@
         <div class="time_counter">
             <p id="countdown">{{time}}</p> <!-- Отобразится обратный отсчёт -->
             <script>
-            var object = {{time}}
-            let time = object;
+            let time = {{time - 1}}; // Задаём начальное время
             const timer = setInterval(() => {
               document.getElementById('countdown').textContent = time <= 0
-                ? clearInterval(timer)
-                : time--;
-            }, 1000);
+                ? clearInterval(timer) // Останавливаем таймер, поскольку время истекло
+                : time--; // С каждой секундой уменьшаем время
+            }, 1000); // Интервал делаем одной секунды
             </script>
-        </div>
+            </div>
         </div>
     </div>
 </div>
-<meta http-equiv="refresh" content="10; url=http://127.0.0.1:5000/end">
+{% if flag == 1 %}
+    <meta http-equiv="refresh" content="0; url=http://127.0.0.1:5000/end">
+{% endif %}
 </html>
