@@ -1,5 +1,5 @@
 import sqlite3
-from random import *
+from random import shuffle
 
 import requests
 from flask import Flask, render_template, redirect, request
@@ -19,6 +19,7 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key_2228'
 cnt_geo, cnt_che, cnt_er, cnt_us = 0, 0, 0, 0
 MAX_CNT_GEO, MAX_CNT_CHE, MAX_CNT_ER, MAX_CNT_US = 0, 0, 0, 0
 CORRECT_GEO, CORRECT_CHE, CORRECT_ER, CORRECT_US = 0, 0, 0, 0
+flag_che, flag_geo, flag_us, flag_er = False, False, False, False
 
 def geo_extra():
     map_request = "https://static-maps.yandex.ru/1.x/?ll=137.685869,-27.182713&spn=20.116457,20.10619&l=sat"
@@ -70,15 +71,14 @@ def add_quiz():
 
 @app.route('/before_geography', methods=['POST', 'GET'])
 def before_geography():
-    global MAX_CNT_GEO
-    global cnt_geo
+    global MAX_CNT_GEO, cnt_geo, flag_geo
     cnt_geo = 0
     MAX_CNT_GEO = 0
     if request.method == 'GET':
         return render_template('before_geographe.html')
     elif request.method == 'POST':
+        flag_geo = True
         MAX_CNT_GEO = int(request.form['number'])
-        n = 0
         con = sqlite3.connect('geo.sqlite')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
@@ -100,20 +100,20 @@ def before_geography():
 
 @app.route('/geography')
 def geography():
-    global cnt_geo
-    global CORRECT_GEO
+    global cnt_geo, CORRECT_GEO, flag_geo
     cnt_geo += 1
     if cnt_geo == MAX_CNT_GEO:
         if CORRECT_GEO == MAX_CNT_GEO:
             CORRECT_GEO = 0
+            flag_geo = False
             return render_template('end_ura.html')
         else:
             true_answer = CORRECT_GEO
             false_answer = MAX_CNT_GEO - CORRECT_GEO
             CORRECT_GEO = 0
+            flag_geo = False
             return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
-        n = 0
         con = sqlite3.connect('geo.sqlite')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
@@ -135,21 +135,21 @@ def geography():
 
 @app.route('/geography_true')
 def geography_true():
-    global cnt_geo
-    global CORRECT_GEO
+    global cnt_geo, CORRECT_GEO, flag_geo
     CORRECT_GEO += 1
     cnt_geo += 1
     if cnt_geo == MAX_CNT_GEO:
         if CORRECT_GEO == MAX_CNT_GEO:
             CORRECT_GEO = 0
+            flag_geo = False
             return render_template('end_ura.html')
         else:
             true_answer = CORRECT_GEO
             false_answer = MAX_CNT_GEO - CORRECT_GEO
             CORRECT_GEO = 0
+            flag_geo = False
             return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
-        n = 0
         con = sqlite3.connect('geo.sqlite')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
@@ -165,47 +165,54 @@ def geography_true():
 
 @app.route('/end')
 def end():
-    global CORRECT_ER
-    global CORRECT_GEO
-    global CORRECT_CHE
-    global CORRECT_US
-    if CORRECT_CHE == MAX_CNT_CHE or CORRECT_GEO == MAX_CNT_GEO or CORRECT_ER == MAX_CNT_ER or MAX_CNT_US == CORRECT_US:
-        CORRECT_GEO, CORRECT_CHE, CORRECT_ER, CORRECT_US = 0, 0, 0, 0
+    global CORRECT_ER, CORRECT_GEO, CORRECT_CHE, CORRECT_US
+    global flag_che, flag_geo, flag_er, flag_us
+    if CORRECT_CHE == MAX_CNT_CHE and flag_che:
+        CORRECT_CHE, flag_che = 0, False
         return render_template('end_ura.html')
-    if CORRECT_CHE != MAX_CNT_CHE:
+    if CORRECT_GEO == MAX_CNT_GEO and flag_geo:
+        CORRECT_GEO, flag_geo = 0, False
+        return render_template('end_ura.html')
+    if CORRECT_ER == MAX_CNT_ER and flag_er:
+        CORRECT_ER, flag_er = 0, False
+        return render_template('end_ura.html')
+    if MAX_CNT_US == CORRECT_US and flag_us:
+        CORRECT_US, flag_us = 0, False
+        return render_template('end_ura.html')
+
+    if CORRECT_CHE != MAX_CNT_CHE and flag_che:
         true_answer = CORRECT_CHE
         false_answer = MAX_CNT_CHE - CORRECT_CHE
-        CORRECT_CHE = 0
+        CORRECT_CHE, flag_che = 0, False
         return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
-    if CORRECT_GEO != MAX_CNT_GEO:
+    if CORRECT_GEO != MAX_CNT_GEO and flag_geo:
         true_answer = CORRECT_GEO
         false_answer = MAX_CNT_GEO - CORRECT_GEO
-        CORRECT_GEO = 0
+        CORRECT_GEO, flag_geo = 0, False
         return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
-    if CORRECT_ER != MAX_CNT_ER:
+    if CORRECT_ER != MAX_CNT_ER and flag_er:
         true_answer = CORRECT_ER
         false_answer = MAX_CNT_ER - CORRECT_ER
-        CORRECT_ER = 0
+        CORRECT_ER, flag_er = 0, False
         return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
-    if CORRECT_US != MAX_CNT_US:
+    if CORRECT_US != MAX_CNT_US and flag_us:
         true_answer = CORRECT_US
         false_answer = MAX_CNT_US - CORRECT_US
-        CORRECT_US = 0
+        CORRECT_US, flag_us = 0, False
         return render_template('end_ne_ura.html',  true_answer=true_answer, false_answer=false_answer)
 
 
 
 @app.route('/before_users', methods=['POST', 'GET'])
 def before_users():
-    global MAX_CNT_US
-    global cnt_us
+    global MAX_CNT_US, cnt_us, flag_us
     cnt_us = 0
     MAX_CNT_US = 0
     if request.method == 'GET':
         return render_template('before_users.html')
     elif request.method == 'POST':
+        flag_us = True
         MAX_CNT_US = int(request.form['number'])
-        n = 0
         con = sqlite3.connect('db/quiz.db')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
@@ -222,20 +229,18 @@ def before_users():
 
 @app.route('/users')
 def users():
-    global cnt_us
-    global CORRECT_US
+    global cnt_us, CORRECT_US, flag_us
     cnt_us += 1
     if cnt_us == MAX_CNT_US:
         if CORRECT_US == MAX_CNT_US:
-            CORRECT_US = 0
+            CORRECT_US, flag_us = 0, False
             return render_template('end_ura.html')
         else:
             true_answer = CORRECT_US
             false_answer = MAX_CNT_US - CORRECT_US
-            CORRECT_US = 0
+            CORRECT_US, flag_us = 0, False
             return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
-        n = 0
         con = sqlite3.connect('db/quiz.db')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
@@ -251,21 +256,19 @@ def users():
 
 @app.route('/users_true')
 def users_true():
-    global cnt_us
-    global CORRECT_US
+    global cnt_us, CORRECT_US, flag_us
     CORRECT_US += 1
     cnt_us += 1
     if cnt_us == MAX_CNT_US:
         if CORRECT_US == MAX_CNT_US:
-            CORRECT_US = 0
+            CORRECT_US, flag_us = 0, False
             return render_template('end_ura.html')
         else:
             true_answer = CORRECT_US
             false_answer = MAX_CNT_US - CORRECT_US
-            CORRECT_US = 0
+            CORRECT_US, flag_us = 0, False
             return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
-        n = 0
         con = sqlite3.connect('db/quiz.db')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM quiz""").fetchall()
@@ -281,14 +284,13 @@ def users_true():
 
 @app.route('/before_erudition', methods=['POST', 'GET'])
 def before_erudition():
-    global MAX_CNT_ER
-    global cnt_er
+    global MAX_CNT_ER, cnt_er, flag_er
     cnt_er = 0
     if request.method == 'GET':
         return render_template('before_erudition.html')
     elif request.method == 'POST':
         MAX_CNT_ER = int(request.form['time'])
-        n = 0
+        flag_er = True
         con = sqlite3.connect('databaze.sqlite')
         cur = con.cursor()
         result = cur.execute(f"""SELECT * FROM data""").fetchall()
@@ -304,10 +306,9 @@ def before_erudition():
 
 @app.route('/erudition')
 def erudition():
-    global cnt_er
+    global cnt_er, flag_er
     cnt_er += 1
     time = MAX_CNT_ER
-    n = 0
     con = sqlite3.connect('databaze.sqlite')
     cur = con.cursor()
     result = cur.execute(f"""SELECT * FROM data""").fetchall()
@@ -321,12 +322,10 @@ def erudition():
 
 @app.route('/erudition_true')
 def erudition_true():
-    global cnt_er
-    global CORRECT_ER
+    global cnt_er, CORRECT_ER, flag_er
     CORRECT_ER += 1
     cnt_er += 1
     time = MAX_CNT_ER
-    n = 0
     con = sqlite3.connect('databaze.sqlite')
     cur = con.cursor()
     result = cur.execute(f"""SELECT * FROM data""").fetchall()
@@ -340,13 +339,13 @@ def erudition_true():
 
 @app.route('/before_chemistry', methods=['POST', 'GET'])
 def before_chemistry():
-    global MAX_CNT_CHE
-    global cnt_che
+    global MAX_CNT_CHE, cnt_che, flag_che
     cnt_che = 0
     MAX_CNT_CHE = 0
     if request.method == 'GET':
         return render_template('before_chemistry.html')
     elif request.method == 'POST':
+        flag_che = True
         MAX_CNT_CHE = int(request.form['number'])
         con = sqlite3.connect('chem.sqlite')
         cur = con.cursor()
@@ -366,17 +365,16 @@ def before_chemistry():
 
 @app.route('/chemistry')
 def chemistry():
-    global cnt_che
-    global CORRECT_CHE
+    global cnt_che, flag_che, CORRECT_CHE
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
         if CORRECT_CHE == MAX_CNT_CHE:
-            CORRECT_CHE = 0
+            CORRECT_CHE, flag_che = 0, False
             return render_template('end_ura.html')
         else:
             true_answer = CORRECT_CHE
             false_answer = MAX_CNT_CHE - CORRECT_CHE
-            CORRECT_CHE = 0
+            CORRECT_CHE, flag_che = 0, False
             return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         con = sqlite3.connect('chem.sqlite')
@@ -396,18 +394,17 @@ def chemistry():
 
 @app.route('/chemistry_true')
 def chemistry_true():
-    global CORRECT_CHE
+    global CORRECT_CHE, cnt_che, flag_che
     CORRECT_CHE += 1
-    global cnt_che
     cnt_che += 1
     if cnt_che == MAX_CNT_CHE:
         if CORRECT_CHE == MAX_CNT_CHE:
-            CORRECT_CHE = 0
+            CORRECT_CHE, flag_che = 0, False
             return render_template('end_ura.html')
         else:
             true_answer = CORRECT_CHE
             false_answer = MAX_CNT_CHE - CORRECT_CHE
-            CORRECT_CHE = 0
+            CORRECT_CHE, flag_che = 0, False
             return render_template('end_ne_ura.html', true_answer=true_answer, false_answer=false_answer)
     else:
         con = sqlite3.connect('chem.sqlite')
